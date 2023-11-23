@@ -14,10 +14,6 @@ const slides = [
     {
         "image":"slide4.png",
         "tagLine":"Autocollants <span>avec découpe laser sur mesure</span>"
-    },
-    {
-        "image":"slide1.jpg",
-        "tagLine":"Impressions tous formats <span>en boutique et en ligne</span>"
     }
 ]
 let currentIndex = 0;
