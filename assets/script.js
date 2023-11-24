@@ -1,64 +1,108 @@
-const slides = [
-    {
-        "image":"slide1.jpg",
-        "tagLine":"Impressions tous formats <span>en boutique et en ligne</span>"
-    },
-    {
-        "image":"slide2.jpg",
-        "tagLine":"Tirages haute définition grand format <span>pour vos bureaux et events</span>"
-    },
-    {
-        "image":"slide3.jpg",
-        "tagLine":"Grand choix de couleurs <span>de CMJN aux pantones</span>"
-    },
-    {
-        "image":"slide4.png",
-        "tagLine":"Autocollants <span>avec découpe laser sur mesure</span>"
+let activeIndex = 0;
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+	const slides = [
+		{
+			"image":"slide1.jpg",
+			"tagLine":"Impressions tous formats <span>en boutique et en ligne</span>"
+		},
+		{
+			"image":"slide2.jpg",
+			"tagLine":"Tirages haute définition grand format <span>pour vos bureaux et events</span>"
+		},
+		{
+			"image":"slide3.jpg",
+			"tagLine":"Grand choix de couleurs <span>de CMJN aux pantones</span>"
+		},
+		{
+			"image":"slide4.png",
+			"tagLine":"Autocollants <span>avec découpe laser sur mesure</span>"
+		},
+        {
+			"image":"slide1.jpg",
+			"tagLine":"Impressions tous formats <span>en boutique et en ligne</span>"
+		}
+	]
+
+	const slideContainer = document.querySelector('.slide-container');
+    const dotsContainer = document.querySelector('.dots');
+    
+    // Initialiser les slides et les dots
+    slides.forEach((slide, index) => {
+        // Créer l'élément slide
+        const slideElement = document.createElement('div');
+        slideElement.classList.add('slide');
+        if(index === 0) slideElement.classList.add('active');
+
+        // Ajouter l'image
+        const imageElement = document.createElement('img');
+        imageElement.src = `./assets/images/slideshow/${slide.image}`;
+        imageElement.alt = `Slide ${index + 1}`;
+        imageElement.classList.add('banner-img');
+        slideElement.appendChild(imageElement);
+
+        // Ajouter le tagline
+        const taglineElement = document.createElement('p');
+        taglineElement.innerHTML = slide.tagLine;
+        slideElement.appendChild(taglineElement);
+
+        // Ajouter le slide au conteneur
+        slideContainer.appendChild(slideElement);
+
+        // Créer les dots
+        const dotElement = document.createElement('div');
+        dotElement.classList.add('dot');
+        if(index === 0) dotElement.classList.add('dot_selected');
+        dotsContainer.appendChild(dotElement);
+    });
+
+    const leftArrow = document.querySelector('.arrow_left');
+    const rightArrow = document.querySelector('.arrow_right');
+
+	function updateDots() {
+        const allDots = document.querySelectorAll('.dots .dot');
+        const allSlides = document.querySelectorAll('.slide');
+        const activeSlide = document.querySelector('.slide.active');
+        activeIndex = Array.from(allSlides).indexOf(activeSlide);
+
+        // Utiliser la longueur de slides pour déterminer l'index du dot actif
+        activeIndex = activeIndex % slides.length;
+
+        allDots.forEach((dot, index) => {
+            dot.classList.remove('dot_selected');
+            if (index === activeIndex) {
+                dot.classList.add('dot_selected');
+            }
+        });
     }
-]
-let currentIndex = 0;
-const arrowLeft = document.querySelector(".arrow_left");
-const arrowRight = document.querySelector(".arrow_right");
-const dots = document.querySelector(".dots");
-const bannerImg = document.querySelector(".banner-img");
-const tagLine = document.querySelector("#banner p");
-function updateSlider(){
-        // Initialisation de la premiere slide/tag line
-    bannerImg.src = `./assets/images/slideshow/${slides[currentIndex].image}`;
-    tagLine.innerHTML = slides[currentIndex].tagLine;
-        //Mise a jour class pour dot selectionne
-    const allDots = document.querySelectorAll('.dot');
-    allDots.forEach((dot, index) => {
-        dot.classList.remove('dot_selected');
-        if (index === currentIndex) {
-          dot.classList.add('dot_selected');
+
+    function setActiveSlide(slide) {
+        // Supprimer la classe 'active' de toutes les slides
+        document.querySelectorAll('.slide').forEach(slide => slide.classList.remove('active'));
+
+        // Ajouter la classe 'active' à la slide actuelle
+        slide.classList.add('active');
+        updateDots();
+    }
+
+    leftArrow.addEventListener('click', () => {
+        activeIndex--;
+        if (activeIndex < 0) {
+            activeIndex = slides.length - 1;
         }
-      });
-}
-    // Fleche gauche
-arrowLeft.addEventListener("click", () => {
-    currentIndex--;
-    // Retour a la derniere slide
-    if(currentIndex < 0){
-        currentIndex = slides.length - 1;
-    }
-    updateSlider();
+        setActiveSlide(document.querySelectorAll('.slide')[activeIndex]);
+    });
+    
+    rightArrow.addEventListener('click', () => {
+        activeIndex++;
+        if (activeIndex >= slides.length) {
+            activeIndex = 0;
+        }
+        setActiveSlide(document.querySelectorAll('.slide')[activeIndex]);
+    });
+
+    // Initialise le slider sur le premier slide
+    setActiveSlide(document.querySelector('.slide'));
 });
-    // Fleche droite
-arrowRight.addEventListener("click", () => {
-    currentIndex++;
-    //Retour a la premiere slide
-    if(currentIndex >= slides.length){
-        currentIndex = 0;
-    }
-    updateSlider();
-})
-    //Initialisation du html des dots
-for(let i = 0; i < slides.length; i++){
-    dots.innerHTML +=
-    '<span id="dot' +
-    i +
-    '" class="dot" title="Image ' +
-    (i + 1) +
-    '"></span>';
-}
+
